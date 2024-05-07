@@ -19,7 +19,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Run Maven tests
-        run: mvn cleam package
+        run: mvn clean package
 
       - name: Login to Amazon ECR
         id: login-ecr
