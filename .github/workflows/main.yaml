@@ -2,8 +2,7 @@ name: Java CI with Spring Boot
 
 on:
   push:
-    branches:
-      - main
+    branches: [ master ]
 
 jobs:
   build:
