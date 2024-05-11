@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: Spring-Boot-App
+  labels:
+    app: Spring-Boot-App
+    owner: Valerii_Vasianovych
+spec:
+  selector:
+    app: Spring-Boot-App
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
