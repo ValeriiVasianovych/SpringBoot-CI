@@ -1,51 +1,51 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Spring-Boot-App
-  labels:
-    app: Spring-Boot-App
-    owner: Valerii_Vasianovych
+   name: spring-boot-app-as
+   labels:
+      app: spring-boot-app
+      owner: Valerii_Vasianovych
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: Spring-Boot-App
-  template:
-    metadata:
-      labels:
-        app: Spring-Boot-App
-    spec:
-      containers:
-        - name: Spring-Boot-App
-          image: 312211201134.dkr.ecr.us-east-1.amazonaws.com/spring:latest
-          ports:
-            - containerPort: 8080
+   replicas: 2
+   selector:
+      matchLabels:
+         app: spring-boot-app
+   template:
+      metadata:
+         labels:
+            app: spring-boot-app
+      spec:
+         containers:
+            - name: spring-boot-app
+              image: 312211201134.dkr.ecr.us-east-1.amazonaws.com/spring:latest
+              ports:
+                 - containerPort: 8080
 
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: spring-boot-app-as
-  labels:
-    app: Spring-Boot-App
-    owner: Valerii_Vasianovych
+   name: spring-boot-app-as
+   labels:
+      app: spring-boot-app-as
+      owner: Valerii_Vasianovych
 spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: Spring-Boot-App
-  minReplicas: 2
-  maxReplicas: 4
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
-    - type: Resource
-      resource:
-        name: memory
-        target:
-          type: Utilization
-          averageUtilization: 80
+   scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: spring-boot-app-as
+   minReplicas: 2
+   maxReplicas: 4
+   metrics:
+      - type: Resource
+        resource:
+           name: cpu
+           target:
+              type: Utilization
+              averageUtilization: 70
+      - type: Resource
+        resource:
+           name: memory
+           target:
+              type: Utilization
+              averageUtilization: 80
