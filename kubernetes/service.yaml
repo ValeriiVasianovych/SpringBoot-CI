@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: Spring-Boot-App
+  name: spring-boot-app-as
   labels:
-    app: Spring-Boot-App
+    app: spring-boot-app
     owner: Valerii_Vasianovych
 spec:
   selector:
-    app: Spring-Boot-App
+    app: spring-boot-app
   ports:
     - protocol: TCP
       port: 80

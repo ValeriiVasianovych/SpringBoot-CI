@@ -2,17 +2,25 @@
 name: Java CI with Spring Boot
 env:
   AWS_REGION           :  us-east-1
+  EKS_CLUSTER_NAME     :  spring-boot-cluster
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID    :  ${{ secrets.AWS_ACCESS_KEY_ID }}
+  ECR_REPOSITORY       :  spring-boot-cluster
 on:
   push:
     branches: [ master ]
 
 jobs:
   build:
+
+    name: Deployment
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set short git commit hash
+        id: commit
+        uses: prompt/actions-commit-hash@v2
+       
       - name: Checkout repository
         uses: actions/checkout@v2
       
@@ -41,19 +49,22 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: spring
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ steps.commit.outputs.short }}
 
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Update Kubernetes Config
-        run: aws eks update-kubeconfig --name spring-cluster
+        run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
 
       - name: Deploy to Amazon EKS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.commit.outputs.short }}
         run: |
-          kubectl apply -f kubernetes/deployment.yaml --validate=false
-          kubectl apply -f kubernetes/service.yaml --validate=false
+          sed -i.bak "s|DOCKER_IMAGE|$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG|g" kubernetes/deployment.yaml && \
+          kubectl apply -f kubernetes/deployment.yaml
+          kubectl apply -f kubernetes/service.yaml
 
         
