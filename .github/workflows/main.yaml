@@ -5,7 +5,7 @@ env:
   EKS_CLUSTER_NAME     :  spring-boot-cluster
   AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_ACCESS_KEY_ID    :  ${{ secrets.AWS_ACCESS_KEY_ID }}
-  ECR_REPOSITORY       :  spring-boot-cluster
+  ECR_REPOSITORY       :  spring
 on:
   push:
     branches: [ master ]
