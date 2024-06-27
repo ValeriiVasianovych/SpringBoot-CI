@@ -40,10 +40,11 @@ pipeline {
                     if (runningContainers) {
                         sh "docker stop $runningContainers"
                     }
-                    sh "docker run -d -p 8080:8080 ${DOCKERHUB_USERNAME}/${APPLICATION_NAME}:${IMAGE_TAG}"
+                    sh "docker run -d -P ${DOCKERHUB_USERNAME}/${APPLICATION_NAME}:${IMAGE_TAG}"
                     sh "sleep 5"
+                    def containerPort = sh(script: "docker port ${runningContainers} 8080/tcp", returnStdout: true).trim()
                     sh """
-                        if curl -I http://localhost:8080 | grep -q "200 OK"; then 
+                        if curl -I http://localhost:${containerPort} | grep -q "200 OK"; then
                             echo 'Test passed'; 
                         else 
                             echo 'Test failed'; 
