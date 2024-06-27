@@ -1,6 +1,6 @@
 pipeline {
     agent any
-
+    
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
     }
@@ -35,10 +35,22 @@ pipeline {
 
         stage('Test Docker Image') {
             steps {
-                sh "docker stop \$(docker ps -q)"
-                sh "docker run -d -p 8080:8080 ${DOCKERHUB_USERNAME}/${APPLICATION_NAME}:${IMAGE_TAG}"
-                sh "sleep 5"
-                sh 'if curl -I http://localhost:8080 | grep "200 OK"; then echo "Success"; else exit 1; fi'
+                script {
+                    def runningContainers = sh(script: "docker ps -q", returnStdout: true).trim()
+                    if (runningContainers) {
+                        sh "docker stop $runningContainers"
+                    }
+                    sh "docker run -d -p 8080:8080 ${DOCKERHUB_USERNAME}/${APPLICATION_NAME}:${IMAGE_TAG}"
+                    sh "sleep 5"
+                    sh """
+                        if curl -I http://localhost:8080 | grep -q "200 OK"; then 
+                            echo 'Test passed'; 
+                        else 
+                            echo 'Test failed'; 
+                            exit 1; 
+                        fi
+                    """
+                }
             }
         }
 
@@ -57,8 +69,8 @@ pipeline {
         stage('Notification') {
             steps {
                 mail to: 'valerii.vasianovych.2003@gmail.com',
-                        subject: "Build Successful: ${currentBuild.fullDisplayName}",
-                        body: 'Docker Image has been pushed to Docker Hub'
+                    subject: "Build Successful: ${currentBuild.fullDisplayName}",
+                    body: 'Docker Image has been pushed to Docker Hub'
             }
         }
     }
@@ -70,8 +82,8 @@ pipeline {
         }
         failure {
             mail to: 'valerii.vasianovych.2003@gmail.com',
-                    subject: "Build Failed: ${currentBuild.fullDisplayName}",
-                    body: 'Docker Image has not been pushed to Docker Hub'
+                subject: "Build Failed: ${currentBuild.fullDisplayName}",
+                body: 'Docker Image has not been pushed to Docker Hub'
         }
     }
 }
