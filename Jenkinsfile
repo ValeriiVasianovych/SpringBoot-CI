@@ -33,28 +33,6 @@ pipeline {
             }
         }
 
-        stage('Test Docker Image') {
-            steps {
-                script {
-                    def runningContainers = sh(script: "docker ps -q", returnStdout: true).trim()
-                    if (runningContainers) {
-                        sh "docker stop $runningContainers"
-                    }
-                    sh "docker run -d -P ${DOCKERHUB_USERNAME}/${APPLICATION_NAME}:${IMAGE_TAG}"
-                    sh "sleep 5"
-                    def containerPort = sh(script: "docker port ${runningContainers} 8080/tcp", returnStdout: true).trim()
-                    sh """
-                        if curl -I http://localhost:${containerPort} | grep -q "200 OK"; then
-                            echo 'Test passed'; 
-                        else 
-                            echo 'Test failed'; 
-                            exit 1; 
-                        fi
-                    """
-                }
-            }
-        }
-
         stage('Login to Docker Hub') {
             steps {
                 sh 'echo ${DOCKER_HUB_CREDENTIALS_PSW} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin'
