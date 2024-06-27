@@ -6,6 +6,6 @@ COPY target/*.jar app.jar
 
 COPY . .
 
-EXPOSE 8081
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,30 +1,69 @@
-# SpringBoot Continuous Integration (CI) with Jenkins and Docker
+# SpringBoot CI/CD with Jenkins and Argo CD on Amazon EKS
 
-## Overview
+This project demonstrates a CI/CD pipeline using Spring Boot application, Jenkins, Docker/Dockerhub, Helm and Argo CD, Kubernetes on EKS.
 
-This project demonstrates a CI/CD pipeline for a SpringBoot application using Jenkins, Docker, and ArgoCD. The pipeline performs the following steps:
+## Preview
+![project](img/preview.jpg)
 
-1. When changes are pushed to the master branch of the SpringBoot app repository on GitHub, Jenkins triggers the CI process.
-2. Jenkins checks out the code, builds the project using Maven, creates a Docker image, and runs the container.
-3. Jenkins verifies that the application is running on port 8080.
-4. Upon successful verification, Jenkins pushes the Docker image to DockerHub and sends a notification email.
-5. ArgoCD, running in an EKS cluster, detects the new image version and deploys it using Helm charts.
+## Technologies Used
+**Spring Boot:** Spring Boot is an open-source Java-based framework used to create micro-services and stand-alone Java applications.
+**Jenkins:** Jenkins is an open-source automation server that helps to automate the non-human part of the software development process.
+**Docker:** Docker is a platform for developing, shipping, and running applications in containers.
+**DockerHub:** DockerHub is a cloud-based repository in which Docker users and partners create, test, store, and distribute container images.
+**Argo CD:** Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes.
+**Helm:** Helm is a package manager for Kubernetes that allows developers and operators to more easily package, configure, and deploy applications and services onto Kubernetes clusters.
+**Kubernetes:** Kubernetes is an open-source container-orchestration system for automating computer application deployment, scaling, and management.
+**Amazon EKS:** Amazon Elastic Kubernetes Service (Amazon EKS) is a managed service that makes it easy for you to run Kubernetes on AWS without needing to install, operate, and maintain your own Kubernetes control plane.
+**2 GitHub Repositories:** One for the Spring Boot application and the other for Argo CD Helm Charts.
 
-## Prerequisites
+## Part 1: SpringBoot CI
 
-- **Jenkins**: For automating the CI process.
-- **Docker**: To build and run Docker images.
-- **DockerHub**: To store and distribute Docker images.
-- **GitHub Repository**: To host the source code of the SpringBoot application.
-- **EKS Cluster**: Amazon Elastic Kubernetes Service for deploying the application.
-- **ArgoCD**: A continuous delivery tool for Kubernetes.
-- **Helm**: To manage Kubernetes applications.
-- **SpringBoot Application**: The application codebase to be built and deployed.
+This part focuses on Continuous Integration using Jenkins and Docker.
 
-## Conclusion
+### Steps Involved:
 
-This project demonstrates a complete CI/CD pipeline for a SpringBoot application using Jenkins, Docker, DockerHub, and ArgoCD. The pipeline ensures that changes are automatically built, tested, and deployed to the Kubernetes cluster with minimal manual intervention.
+1. **SpringBoot App Development:**
+   - Develop Spring Boot application locally.
 
-## License
+2. **Push to GitHub:**
+   - Push changes to a GitHub repository (`https://github.com/ValeriiVasianovych/SpringBoot-CI-CD`).
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+3. **Jenkins Pipeline:**
+   - Jenkins is configured to monitor the `https://github.com/ValeriiVasianovych/SpringBoot-CI-CD` repository.
+   - On a `git push` event to `master`, Jenkins performs the following steps:
+     - Checks out the latest code.
+     - Runs Maven (`mvn clean package`) to build the application.
+     - Builds a Docker image.
+     - Pushes the Docker image to DockerHub.
+     - Sends a notification email upon successful completion.
+
+## Part 2: SpringBoot GitOps CD
+
+This part focuses on Continuous Deployment using Argo CD and Helm Charts on Amazon EKS.
+
+### Steps Involved:
+
+1. **Deployment Repository Setup:**
+   - Separate GitHub repository (`https://github.com/ValeriiVasianovych/ArgoCD-Helm-Charts`) for storing Argo CD Helm Charts.
+
+2. **Argo CD Configuration:**
+   - Configure Argo CD on EKS cluster (`https://github.com/ValeriiVasianovych/ArgoCD-Helm-Charts`).
+   - Argo CD monitors changes to the Helm Charts repository.
+
+3. **Continuous Deployment:**
+   - Argo CD detects the new image version in the Helm Charts repository.
+   - It deploys the updated application to the EKS cluster automatically.
+
+### Repository Links:
+
+- **SpringBoot App Repository:**
+  - Repository: `https://github.com/ValeriiVasianovych/SpringBoot-CI-CD`
+  - [GitHub](https://github.com/ValeriiVasianovych/SpringBoot-CI-CD)
+
+- **Argo CD Helm Charts Repository:**
+  - Repository: `https://github.com/ValeriiVasianovych/ArgoCD-Helm-Charts`
+  - [GitHub](https://github.com/ValeriiVasianovych/ArgoCD-Helm-Charts)
+
+### License:
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
