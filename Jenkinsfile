@@ -57,7 +57,6 @@ pipeline {
     post {
         always {
             sh "docker logout"
-            sh "docker stop \$(docker ps -q)"
         }
         failure {
             mail to: 'valerii.vasianovych.2003@gmail.com',
