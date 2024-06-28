@@ -6,10 +6,12 @@ pipeline {
     }
 
     environment {
-        DOCKERHUB_USERNAME = 'valeriivasianovych'
-        APPLICATION_NAME = 'spring-boot-app'
+        DOCKERHUB_USERNAME     = "valeriivasianovych"
+        APPLICATION_NAME       = "spring-boot-app"
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
-        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        GITHUB_CREDENTIALS     = credentials('github-credentials')
+        IMAGE_TAG              = "${env.BUILD_NUMBER}"
+        REPO_URL               = "git@github.com:ValeriiVasianovych/ArgoCD-Helm-Charts.git"
     }
 
     stages {
@@ -45,11 +47,30 @@ pipeline {
             }
         }
 
+        stage('Update image version for ArgoCD in other repository') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
+                    sh 'git config --global user.email "valerii.vasianovych.2003@gmail.com"'
+                    sh 'git config --global user.name "ValeriiVasianovych"'
+
+                    script {
+                        sh 'git clone ${REPO_URL}'
+                        dir('ArgoCD-Helm-Charts') {
+                            sh "sed -i 's|valeriivasianovych/spring-boot-app:.*|valeriivasianovych/spring-boot-app:${IMAGE_TAG}|' ArgoCD-Helm/cluster/applications/springbootapp/app2.yaml"
+                            sh "git add ArgoCD-Helm/cluster/applications/springbootapp/app2.yaml"
+                            sh "git commit -m \"Update image version to ${IMAGE_TAG}\""
+                            sh "git push origin master"
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Notification') {
             steps {
                 mail to: 'valerii.vasianovych.2003@gmail.com',
                     subject: "Build Successful: ${currentBuild.fullDisplayName}",
-                    body: 'Docker Image has been pushed to Docker Hub'
+                    body: 'Docker Image has been pushed to Docker Hub and ArgoCD application has been updated'
             }
         }
     }
@@ -61,7 +82,7 @@ pipeline {
         failure {
             mail to: 'valerii.vasianovych.2003@gmail.com',
                 subject: "Build Failed: ${currentBuild.fullDisplayName}",
-                body: 'Docker Image has not been pushed to Docker Hub'
+                body: 'Docker Image has not been pushed to Docker Hub or ArgoCD application update failed'
         }
     }
 }
