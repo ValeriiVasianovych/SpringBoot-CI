@@ -49,7 +49,7 @@ pipeline {
 
         stage('Update image version for ArgoCD in other repository') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'github-credential', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
                     sh 'git config --global user.email "valerii.vasianovych.2003@gmail.com"'
                     sh 'git config --global user.name "ValeriiVasianovych"'
 
