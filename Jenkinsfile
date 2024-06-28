@@ -9,6 +9,7 @@ pipeline {
         DOCKERHUB_USERNAME     = "valeriivasianovych"
         APPLICATION_NAME       = "spring-boot-app"
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
+        GITHUB_CREDENTIALS     = credentials('github-credential')
         IMAGE_TAG              = "${env.BUILD_NUMBER}"
         REPO_URL               = "git@github.com:ValeriiVasianovych/ArgoCD-Helm-Charts.git"
     }
