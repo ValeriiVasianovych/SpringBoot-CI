@@ -53,10 +53,10 @@ pipeline {
                     sh 'git config --global user.name "ValeriiVasianovych"'
 
                     script {
-                        sh 'git clone ${REPO_URL}'
+                        sh "git clone ${REPO_URL}"
                         dir('ArgoCD-Helm-Charts') {
-                            sh "sed -i 's|valeriivasianovych/spring-boot-app:.*|valeriivasianovych/spring-boot-app:${IMAGE_TAG}|' ArgoCD-Helm/cluster/applications/springbootapp/app2.yaml"
-                            sh "git add ArgoCD-Helm/cluster/applications/springbootapp/app2.yaml"
+                            sh "sed -i 's|valeriivasianovych/spring-boot-app:.*|valeriivasianovych/spring-boot-app:${IMAGE_TAG}|' cluster/applications/springbootapp/app2.yaml"
+                            sh "git add ."
                             sh "git commit -m \"Update image version to ${IMAGE_TAG}\""
                             sh "git push origin master"
                         }
