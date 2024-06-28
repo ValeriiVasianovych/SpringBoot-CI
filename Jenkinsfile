@@ -9,7 +9,7 @@ pipeline {
         DOCKERHUB_USERNAME = 'valeriivasianovych'
         APPLICATION_NAME = 'spring-boot-app'
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')
-        IMAGE_TAG = 'latest'
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
 
     stages {
